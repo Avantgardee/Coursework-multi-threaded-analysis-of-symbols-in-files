@@ -1,0 +1,198 @@
+File: D:\2course\ACTIOS\anon.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0001786 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\2lab.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0045596 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\2lab.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0012327 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\Multipler.pdsprj.DESKTOP-TMA5T01.Mikita.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0008117 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\Multipler.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0012806 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\Backup Of Multipler.pdsbak | End Time: 2024-11-10 04:11:03 | Duration: 0.0013413 seconds
+File: D:\2course\ACTIOS\LAB 3\LAB 3\Multipler.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0013243 seconds
+File: D:\2course\ACTIOS\LAB 3\LAB 3\Multipler.pdsprj.DESKTOP-TMA5T01.Mikita.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0009565 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\Multipler.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0069697 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\Last Loaded Multipler.pdsbak | End Time: 2024-11-10 04:11:03 | Duration: 0.0072929 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\Project Backups\Multipler [Autosaved].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0074349 seconds
+File: D:\2course\ACTIOS\lab1.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0007349 seconds
+File: D:\2course\ACTIOS\LAB 3\LAB 3\Last Loaded Multipler.pdsbak | End Time: 2024-11-10 04:11:03 | Duration: 0.0093858 seconds
+File: D:\2course\ACTIOS\LAB 3\LAB 3\Multipler.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.009658 seconds
+File: D:\2course\ACTIOS\lab1.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0040965 seconds
+File: D:\2course\ACTIOS\lab1task3.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0012368 seconds
+File: D:\2course\ACTIOS\lab1task4.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0012539 seconds
+File: D:\2course\ACTIOS\lab1task4.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0053562 seconds
+File: D:\2course\ACTIOS\lab1task3.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0084825 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\mili.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0012184 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\mili.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0099254 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 02-34-32].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0105861 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 02-34-36].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0102101 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 02-48-08].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0104471 seconds
+File: D:\2course\ACTIOS\Lab1_report.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.0299987 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 02-48-09].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0099074 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 03-02-03].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.010426 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 03-02-04].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0110828 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 03-03-04].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0108184 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 03-03-05].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.010473 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230924, 03-06-08].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.010567 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [20230927, 23-16-06].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0101962 seconds
+File: D:\2course\ACTIOS\Lab_3_multiplayer_1.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0009488 seconds
+File: D:\2course\ACTIOS\lab3_avtomat\Project Backups\mili [Autosaved].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0101472 seconds
+File: D:\2course\ACTIOS\mili.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0007766 seconds
+File: D:\2course\ACTIOS\Lab_3_multiplayer_1.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.010751 seconds
+File: D:\2course\ACTIOS\mili.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0069815 seconds
+File: D:\2course\ACTIOS\New Project.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0013104 seconds
+File: D:\2course\ACTIOS\New Project.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0058812 seconds
+File: D:\2course\ACTIOS\lab1.SVG | End Time: 2024-11-10 04:11:03 | Duration: 0.0750668 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230910, 17-51-50].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0068185 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230910, 23-42-53].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0066663 seconds
+File: D:\2course\ACTIOS\OSISPtest.zip | End Time: 2024-11-10 04:11:03 | Duration: 0.0129533 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230911, 00-01-46].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0072073 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230911, 00-04-19].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0070044 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230911, 00-01-47].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0086992 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230911, 00-11-35].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.007818 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [20230913, 21-41-14].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0080066 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task4 [20230913, 21-42-51].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0046734 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task4 [20230913, 21-43-44].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0048934 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task3 [Autosaved].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0070959 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task4 [20230914, 16-13-35].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0045112 seconds
+File: D:\2course\ACTIOS\Project Backups\lab1task4 [Proteus 8.13].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0042994 seconds
+File: D:\2course\ACTIOS\Project Backups\New Project [20230907, 23-11-29].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0060274 seconds
+File: D:\2course\ACTIOS\Project Backups\New Project [20230910, 16-45-12].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.007296 seconds
+File: D:\2course\ACTIOS\Project Backups\New Project [20230913, 21-05-06].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0056719 seconds
+File: D:\2course\ACTIOS\Project Backups\New Project [Autosaved].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0056976 seconds
+File: D:\2course\ACTIOS\scetchik(15).pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.001403 seconds
+File: D:\2course\ACTIOS\scetchik(15).pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0057517 seconds
+File: D:\2course\ACTIOS\актиос\актиос\Lab02\0200.drawio | End Time: 2024-11-10 04:11:03 | Duration: 0.002606 seconds
+File: D:\2course\ACTIOS\test1.hgl | End Time: 2024-11-10 04:11:03 | Duration: 0.0185612 seconds
+File: D:\2course\ACTIOS\актиос\актиос\New Project.pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.007772 seconds
+File: D:\2course\ACTIOS\актиос\актиос\New Project.pdsprj.DESKTOP-CTV7T2Q.USER.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.0012558 seconds
+File: D:\2course\ACTIOS\актиос\актиос\New Project.pdsprj.DESKTOP-GMEIMHS.webdesigner.workspace | End Time: 2024-11-10 04:11:03 | Duration: 0.001243 seconds
+File: D:\2course\ACTIOS\актиос\актиос\Project Backups\New Project [20230920, 20-27-25].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0042279 seconds
+File: D:\2course\ACTIOS\актиос\актиос\Project Backups\New Project [20230922, 02-56-07].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0077999 seconds
+File: D:\2course\ACTIOS\LAB 3\LAB 3\лаба 3 отчет.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.158287 seconds
+File: D:\2course\ACTIOS\актиос\актиос\Project Backups\New Project [Autosaved].pdsprj | End Time: 2024-11-10 04:11:03 | Duration: 0.0075592 seconds
+File: D:\2course\ACTIOS\блочка.drawio | End Time: 2024-11-10 04:11:03 | Duration: 0.0002148 seconds
+File: D:\2course\ACTIOS\LAB 2\LAB 2\отчет 2.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.178804 seconds
+File: D:\2course\ACTIOS\АКТ_1.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.0657353 seconds
+File: D:\2course\ACTIOS\блочка (1).drawio | End Time: 2024-11-10 04:11:03 | Duration: 0.0221439 seconds
+File: D:\2course\ACTIOS\Вопросы к зачету АКТиОС_2023.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.0084594 seconds
+File: D:\2course\ACTIOS\SCETCHIK(15).ms12 | End Time: 2024-11-10 04:11:03 | Duration: 0.0808634 seconds
+File: D:\2course\ACTIOS\йап\йап\blyadskaya_sortirovka_po_chyotnosti_ebat_eyo_v_rot.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0005386 seconds
+File: D:\2course\ACTIOS\йап\йап\chastota_vkhozhdenia_simvola.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0003696 seconds
+File: D:\2course\ACTIOS\йап\йап\chisla_cherez_zapyatuyu.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004088 seconds
+File: D:\2course\ACTIOS\йап\йап\dva_minimalnykh_float-a.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004217 seconds
+File: D:\2course\ACTIOS\блочка.drawio.svg | End Time: 2024-11-10 04:11:03 | Duration: 0.0323129 seconds
+File: D:\2course\ACTIOS\йап\йап\kolichestvo_slov_s_simvolom.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004565 seconds
+File: D:\2course\ACTIOS\йап\йап\maximalny_stolbets_matritsy.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004914 seconds
+File: D:\2course\ACTIOS\йап\йап\minimalnaya_stroka_matritsy.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0006479 seconds
+File: D:\2course\ACTIOS\йап\йап\minimalnoe_chyotnoe.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.000455 seconds
+File: D:\2course\ACTIOS\йап\йап\nok_cherez_nod.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004176 seconds
+File: D:\2course\ACTIOS\йап\йап\sistemy_schislenia.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0003598 seconds
+File: D:\2course\ACTIOS\йап\йап\sortirovka_tsi_ne.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004624 seconds
+File: D:\2course\ACTIOS\йап\йап\stepen_li.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0003373 seconds
+File: D:\2course\ACTIOS\йап\йап\stroki_matritsy_s_chislom_A.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.000495 seconds
+File: D:\2course\ACTIOS\йап\йап\udalit_k-ty_element.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0003859 seconds
+File: D:\2course\ACTIOS\йап\йап\udalit_komment.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0002777 seconds
+File: D:\2course\ACTIOS\йап\йап\udalit_simvol_iz_stroki.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.000371 seconds
+File: D:\2course\ACTIOS\йап\йап\vkhozhdenia_chisla.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0005368 seconds
+File: D:\2course\ACTIOS\йап\йап\vyrazhenie.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004857 seconds
+File: D:\2course\ACTIOS\йап\йап\16_Vvedenie_v_semanticheskiy_analiz.pps | End Time: 2024-11-10 04:11:03 | Duration: 0.0211028 seconds
+File: D:\2course\ACTIOS\йап\йап\vyvesti_stepeni.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0003381 seconds
+File: D:\2course\ACTIOS\Lab1(3,6,10,15)_report.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.21189 seconds
+File: D:\2course\ACTIOS\йап\йап\zaglavnaya_latinitsa.txt | End Time: 2024-11-10 04:11:03 | Duration: 0.0004035 seconds
+File: D:\2course\ACTIOS\йап\йап\~$yap.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.000233 seconds
+File: D:\2course\ACTIOS\йап\йап\YaP_Voprosy_k_ekzamenu_2021_2022.doc | End Time: 2024-11-10 04:11:03 | Duration: 0.0147318 seconds
+File: D:\2course\ACTIOS\лаб 8 Убоженко 251005.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.0068149 seconds
+File: D:\2course\ACTIOS\Лаб №8.docx | End Time: 2024-11-10 04:11:03 | Duration: 0.0074081 seconds
+File: D:\2course\ACTIOS\лаба6.docx | End Time: 2024-11-10 04:11:04 | Duration: 0.0296771 seconds
+File: D:\2course\ACTIOS\йап\йап\17_Optimizatsia_i_generatsia_koda.pps | End Time: 2024-11-10 04:11:04 | Duration: 0.0776387 seconds
+File: D:\2course\ACTIOS\актиос\актиос\Lab02\0200.ms12 | End Time: 2024-11-10 04:11:04 | Duration: 0.147584 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\f.txt | End Time: 2024-11-10 04:11:04 | Duration: 0.003866 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\Документ Microsoft Word.docx | End Time: 2024-11-10 04:11:04 | Duration: 0.0632795 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\Новый текстовый документ.txt | End Time: 2024-11-10 04:11:04 | Duration: 0.206543 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\Лабораторная №1_2023.docx | End Time: 2024-11-10 04:11:04 | Duration: 0.308328 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\Пример создания схемы  в Proteus (1).docx | End Time: 2024-11-10 04:11:04 | Duration: 0.397484 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\!!!АЛГОРИТМЫ УМНОЖЕНИЯ п.pdf | End Time: 2024-11-10 04:11:04 | Duration: 0.205644 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\Создание подсхем в Proteus.docx | End Time: 2024-11-10 04:11:04 | Duration: 0.37474 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование  микросхем_Proteus\Входной регистр.pdf | End Time: 2024-11-10 04:11:04 | Duration: 0.0411393 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование  микросхем_Proteus\Мультиплексор.pdf | End Time: 2024-11-10 04:11:04 | Duration: 0.0182901 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование  микросхем_Proteus\ПЗУ_27C128(для лб3).pdf | End Time: 2024-11-10 04:11:04 | Duration: 0.0175622 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование  микросхем_Proteus\Счетчик.pdf | End Time: 2024-11-10 04:11:04 | Duration: 0.0255094 seconds
+File: D:\2course\ACTIOS\йап\йап\yap.docx | End Time: 2024-11-10 04:11:04 | Duration: 0.873982 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 1\Работа в Multisim.docx | End Time: 2024-11-10 04:11:04 | Duration: 0.667623 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование микросхем_Multisim\Мультирлексор.ms12 | End Time: 2024-11-10 04:11:04 | Duration: 0.0724293 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование микросхем_Multisim\Параллельный регистр.ms12 | End Time: 2024-11-10 04:11:04 | Duration: 0.0334024 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование  микросхем_Proteus\Унивесальный регистр.pdf | End Time: 2024-11-10 04:11:04 | Duration: 0.130392 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование микросхем_Multisim\Мультирлексор.ms12 (Security copy) | End Time: 2024-11-10 04:11:04 | Duration: 0.0694811 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование микросхем_Multisim\Параллельный регистр.ms12 (Security copy) | End Time: 2024-11-10 04:11:04 | Duration: 0.0493337 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование микросхем_Multisim\Сумматор.ms12 | End Time: 2024-11-10 04:11:04 | Duration: 0.0501799 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Использование микросхем_Multisim\Сумматор.ms12 (Security copy) | End Time: 2024-11-10 04:11:05 | Duration: 0.0496857 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 3\Формат Hex-файла.docx | End Time: 2024-11-10 04:11:05 | Duration: 0.0088601 seconds
+File: D:\2course\ACTIOS\Иерархия памяти.pdf | End Time: 2024-11-10 04:11:05 | Duration: 1.25496 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\build-headers.bat | End Time: 2024-11-10 04:11:05 | Duration: 0.0003554 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\idsparser.jar | End Time: 2024-11-10 04:11:05 | Duration: 0.0023071 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\input.tpl | End Time: 2024-11-10 04:11:05 | Duration: 0.0007201 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\input_compat.tpl | End Time: 2024-11-10 04:11:05 | Duration: 0.003191 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 3\Лабораторная 3-2023.pdf | End Time: 2024-11-10 04:11:05 | Duration: 0.359011 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Лабораторная №2_2023.docx | End Time: 2024-11-10 04:11:05 | Duration: 0.363409 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 2\Доп материал.docx | End Time: 2024-11-10 04:11:05 | Duration: 0.671933 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\README.txt | End Time: 2024-11-10 04:11:05 | Duration: 0.0003489 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\update-pciids.bat | End Time: 2024-11-10 04:11:05 | Duration: 0.000547 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Vendor\pcidevs.txt | End Time: 2024-11-10 04:11:05 | Duration: 0.33368 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\pci_compat.h | End Time: 2024-11-10 04:11:05 | Duration: 0.431805 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Vendor\pcidevs20_03_12.txt | End Time: 2024-11-10 04:11:05 | Duration: 0.117109 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\pci.ids | End Time: 2024-11-10 04:11:05 | Duration: 0.512836 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\HeaderFiles\pci.h | End Time: 2024-11-10 04:11:05 | Duration: 0.751036 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Vendor\pci_c_headerИсправлен_раб.h | End Time: 2024-11-10 04:11:06 | Duration: 0.190199 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Vendor\PCIDEVS2_2005.TXT | End Time: 2024-11-10 04:11:06 | Duration: 0.310726 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Vendor\table vender.txt | End Time: 2024-11-10 04:11:06 | Duration: 0.170954 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Vendor\PCIDEVS_2007.TXT | End Time: 2024-11-10 04:11:06 | Duration: 0.3264 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Запуск первой программы.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.130444 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Лабораторная работа 4 2023.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.39113 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 5\2 Лаб 2 работа  с файловой системой.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0591914 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 5\Лабораторная работа 5 .docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0241161 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 5.rar | End Time: 2024-11-10 04:11:06 | Duration: 0.0791307 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 6_2023.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0116601 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 7 2023.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0211499 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 8.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0117083 seconds
+File: D:\2course\ACTIOS\Лабораторная работа №2.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.128224 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Установка и первое знакомство с Linux.doc | End Time: 2024-11-10 04:11:06 | Duration: 0.689037 seconds
+File: D:\2course\ACTIOS\Лабораторная работа №4.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0073543 seconds
+File: D:\2course\ACTIOS\Лабораторная работа №6 моя.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0174427 seconds
+File: D:\2course\ACTIOS\Лабораторная работа №6.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0082402 seconds
+File: D:\2course\ACTIOS\Лабораторная работа №7.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0074749 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\1.hex | End Time: 2024-11-10 04:11:06 | Duration: 0.0002637 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\11.hex | End Time: 2024-11-10 04:11:06 | Duration: 0.0002992 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\2.hex | End Time: 2024-11-10 04:11:06 | Duration: 0.0003017 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\22.hex | End Time: 2024-11-10 04:11:06 | Duration: 0.0002853 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Backup Of Lab2-3.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0041684 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Backup Of Lab2.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.007274 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Backup Of Lab3.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0065671 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Backup Of New Project.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0042452 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Lab2-3.pdsprj | End Time: 2024-11-10 04:11:06 | Duration: 0.0088676 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Lab2-3.pdsprj.DESKTOP-KNOVEGV.ASUS.workspace | End Time: 2024-11-10 04:11:06 | Duration: 0.0010818 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Lab2.pdsprj | End Time: 2024-11-10 04:11:06 | Duration: 0.0068106 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Lab2.pdsprj.DESKTOP-KNOVEGV.ASUS.workspace | End Time: 2024-11-10 04:11:06 | Duration: 0.0008052 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Lab3.pdsprj | End Time: 2024-11-10 04:11:06 | Duration: 0.0064255 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Lab3.pdsprj.DESKTOP-KNOVEGV.ASUS.workspace | End Time: 2024-11-10 04:11:06 | Duration: 0.001508 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Last Loaded Lab2-3.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0086381 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\Системная периферия ibm pc характеристика устройств.doc | End Time: 2024-11-10 04:11:06 | Duration: 0.814359 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Last Loaded Lab2.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0077694 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Last Loaded Lab3.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0067154 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Last Loaded New Project.pdsbak | End Time: 2024-11-10 04:11:06 | Duration: 0.0073509 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\New Project.pdsprj.DESKTOP-KNOVEGV.ASUS.workspace | End Time: 2024-11-10 04:11:06 | Duration: 0.0019306 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\New Project.pdsprj | End Time: 2024-11-10 04:11:06 | Duration: 0.0067411 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4\!!!!ГУКШины PCI, USB и FireWire.pdf | End Time: 2024-11-10 04:11:06 | Duration: 1.92893 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Лабораторная работа №3.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0114898 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Схема алгоритма.vsd | End Time: 2024-11-10 04:11:06 | Duration: 0.0208045 seconds
+File: D:\2course\ACTIOS\Лабораторная работа №3.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.153773 seconds
+File: D:\2course\ACTIOS\Лабы 2-3\Лабы 2-3\Необходимое лабы 2-3.docx | End Time: 2024-11-10 04:11:06 | Duration: 0.0338518 seconds
+File: D:\2course\ACTIOS\ЛЕВАНЦЕВИЧ 11.09.2023.docx | End Time: 2024-11-10 04:11:07 | Duration: 0.172242 seconds
+File: D:\2course\ACTIOS\Ответы.docx | End Time: 2024-11-10 04:11:07 | Duration: 0.0098062 seconds
+File: D:\2course\ACTIOS\ОС_1.docx | End Time: 2024-11-10 04:11:07 | Duration: 0.249186 seconds
+File: D:\2course\ACTIOS\ТЕСТ! — копия (2).txt | End Time: 2024-11-10 04:11:07 | Duration: 0.000202 seconds
+File: D:\2course\ACTIOS\ТЕСТ! — копия.txt | End Time: 2024-11-10 04:11:07 | Duration: 0.0001494 seconds
+File: D:\2course\ACTIOS\ТЕСТ!.txt | End Time: 2024-11-10 04:11:07 | Duration: 0.0001261 seconds
+File: D:\2course\ACTIOS\НОМЕР2.docx | End Time: 2024-11-10 04:11:07 | Duration: 0.257858 seconds
+File: D:\2course\ACTIOS\отчет 2.docx | End Time: 2024-11-10 04:11:07 | Duration: 0.181526 seconds
+File: D:\2course\ACTIOS\Упр_автоматы 2023_3.pptx | End Time: 2024-11-10 04:11:07 | Duration: 0.715934 seconds
+File: D:\2course\ACTIOS\йап\йап\EKZYaP.docx | End Time: 2024-11-10 04:11:08 | Duration: 4.55991 seconds
+File: D:\2course\ACTIOS\йап.zip | End Time: 2024-11-10 04:11:08 | Duration: 4.79044 seconds
+File: D:\2course\ACTIOS\Лабораторная работа 4.rar | End Time: 2024-11-10 04:11:09 | Duration: 3.02956 seconds
+File: D:\2course\ACTIOS\ACTIOS.rar | End Time: 2024-11-10 04:11:09 | Duration: 6.03196 seconds
+File: D:\2course\ACTIOS\Литература АКТ и ОС.rar | End Time: 2024-11-10 04:11:42 | Duration: 35.601 seconds
