@@ -1,5 +1,6 @@
 ﻿#define WM_UPDATE_PROGRESS (WM_USER + 1)
 #define WM_SET_LENGTH (WM_USER + 2)
+#define UNICODE
 #include <windows.h>
 #include <commctrl.h>
 #include <iostream>
@@ -53,6 +54,7 @@ bool allSymbols;
 uint64_t totalSymbolCount;
 uint64_t fileAnalized;
 uint64_t totalFindFiles = 0;
+std::vector<std::pair<char32_t, uint64_t>> sortedFrequencyInFiles;
 // UI элементы
 HWND hwndPathInput, hwndComboBox, hwndListView;
 HWND hwndProgressBar;
@@ -207,7 +209,8 @@ void AddItemToListView(HWND hListView, int index, char32_t symbol, uint64_t coun
     lvItem.iItem = index;
 
     // Символ (сначала отображаем сам символ)
-    lvItem.pszText = const_cast<LPWSTR>(toUtf16(toUtf8(symbol)).c_str());
+    std::wstring utf16Symbol = toUtf16(toUtf8(symbol));
+    lvItem.pszText = const_cast<LPWSTR>(utf16Symbol.c_str());
     int itemIndex = ListView_InsertItem(hListView, &lvItem);
 
     // Количество
@@ -271,14 +274,14 @@ void CreateListView(HWND hwndParent) {
 
 
 // Функция для обновления списка в ListView
-void UpdateListView() {
-    std::vector<std::pair<char32_t, uint64_t>> sortedFrequency(globalFrequency.begin(), globalFrequency.end());
+void UpdateListView(const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency) {
     int index = 0;
     // Преобразование в строку
     for (const auto& [symbol, count] : sortedFrequency) {
         double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
 
         AddItemToListView(hwndListView, index, symbol, count, totalSymbolCount);
+        index++;
     }
 }
 
@@ -322,12 +325,15 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     for (HANDLE thread : threads) {
         CloseHandle(thread);
     }
+
     SendMessage(hwndListView, WM_SETREDRAW, FALSE, 0);
-    UpdateListView();
+    sortedFrequencyInFiles.assign(globalFrequency.begin(), globalFrequency.end());
+    customSort(sortedFrequencyInFiles);
+    UpdateListView(sortedFrequencyInFiles);
     RedrawWindow(hwndListView, NULL, NULL, RDW_INVALIDATE);
     SendMessage(hwndListView, WM_SETREDRAW, TRUE, 0);
     statsFile << "Character frequency statistics:\n";
-    SaveStatistics(statsFile, globalFrequency, totalSymbolCount);  // Передаем statsFile в SaveStatistics
+    SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount);  // Передаем statsFile в SaveStatistics
 
     auto endTime = std::chrono::system_clock::now();
     std::chrono::duration<double> duration = endTime - startTime;
