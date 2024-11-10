@@ -1,5 +1,6 @@
 ﻿#define WM_UPDATE_PROGRESS (WM_USER + 1)
 #define WM_SET_LENGTH (WM_USER + 2)
+#define UNICODE
 #include <windows.h>
 #include <commctrl.h>
 #include <iostream>
@@ -53,9 +54,11 @@ bool allSymbols;
 uint64_t totalSymbolCount;
 uint64_t fileAnalized;
 uint64_t totalFindFiles = 0;
+std::vector<std::pair<char32_t, uint64_t>> sortedFrequencyInFiles;
 // UI элементы
 HWND hwndPathInput, hwndComboBox, hwndListView;
 HWND hwndProgressBar;
+HWND hwndStatusText;
 bool IsInSelectedRanges(char32_t symbol) {
     if (allSymbols) {
         return true; // Если выбран пункт для всех символов, пропускаем проверку
@@ -124,7 +127,7 @@ void AnalyzeFile(const std::wstring& filePath) {
         std::lock_guard<std::mutex> lock(mtx);
         for (const auto& [sym, count] : localFrequency) {
             globalFrequency[sym] += count;
-            totalSymbolCount += count; 
+            totalSymbolCount += count;
         }
     }
 
@@ -134,7 +137,7 @@ void AnalyzeFile(const std::wstring& filePath) {
     tm timeInfo;
     localtime_s(&timeInfo, &endTime);
 
-   
+
     {
         std::lock_guard<std::mutex> lock(mtx);
         std::wostringstream logStream;
@@ -142,7 +145,7 @@ void AnalyzeFile(const std::wstring& filePath) {
             << L" | End Time: " << std::put_time(&timeInfo, L"%Y-%m-%d %H:%M:%S")
             << L" | Duration: " << duration.count() << L" seconds\n";
         logFile << logStream.str();
-        logFile.flush(); 
+        logFile.flush();
     }
 }
 
@@ -164,12 +167,12 @@ DWORD WINAPI WorkerThread(LPVOID param) {
 
         AnalyzeFile(filePath);
 
-        
+
         PostMessage(data->hwnd, WM_UPDATE_PROGRESS, NULL, NULL);
         // Отправляем сообщение в главный поток для обновления прогресс-бара
-       
+
     }
-    
+
     return 0;
 }
 
@@ -188,7 +191,7 @@ void ListFiles(const std::wstring& directoryPath, HWND hwnd) {
 
         if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
             if (fileName != L"." && fileName != L"..") {
-                ListFiles(fullPath,hwnd); // Рекурсивный вызов для обхода поддиректорий
+                ListFiles(fullPath, hwnd); // Рекурсивный вызов для обхода поддиректорий
             }
         }
         else {
@@ -207,7 +210,8 @@ void AddItemToListView(HWND hListView, int index, char32_t symbol, uint64_t coun
     lvItem.iItem = index;
 
     // Символ (сначала отображаем сам символ)
-    lvItem.pszText = const_cast<LPWSTR>(toUtf16(toUtf8(symbol)).c_str());
+    std::wstring utf16Symbol = toUtf16(toUtf8(symbol));
+    lvItem.pszText = const_cast<LPWSTR>(utf16Symbol.c_str());
     int itemIndex = ListView_InsertItem(hListView, &lvItem);
 
     // Количество
@@ -217,7 +221,7 @@ void AddItemToListView(HWND hListView, int index, char32_t symbol, uint64_t coun
 
     // Процент
     double percentage = (static_cast<double>(count) / totalCount) * 100.0;
-    swprintf(buffer, 100, L"%.2f", percentage);
+    swprintf(buffer, 100, L"%.4f", percentage);
     ListView_SetItemText(hListView, itemIndex, 2, buffer);
 
     // Unicode код
@@ -262,7 +266,7 @@ void AddColumns(HWND hListView) {
 // Функция для создания ListView
 void CreateListView(HWND hwndParent) {
     hwndListView = CreateWindowEx(0, WC_LISTVIEW, NULL,
-        WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL | WS_BORDER,
+        WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL | WS_BORDER | LVS_OWNERDATA,
         70, 100, 600, 300, hwndParent, NULL, GetModuleHandle(NULL), NULL);
     ShowWindow(hwndListView, TRUE);
     AddColumns(hwndListView);
@@ -271,23 +275,23 @@ void CreateListView(HWND hwndParent) {
 
 
 // Функция для обновления списка в ListView
-void UpdateListView() {
-    std::vector<std::pair<char32_t, uint64_t>> sortedFrequency(globalFrequency.begin(), globalFrequency.end());
+void UpdateListView(const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency) {
     int index = 0;
     // Преобразование в строку
     for (const auto& [symbol, count] : sortedFrequency) {
         double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
 
         AddItemToListView(hwndListView, index, symbol, count, totalSymbolCount);
+        index++;
     }
 }
 
 
 void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile, std::ofstream& statsFile, HWND hwnd) {
-    
+
 
     auto startTime = std::chrono::system_clock::now();
-    
+
     // Запись BOM для UTF-8
     unsigned char bom[3] = { 0xEF, 0xBB, 0xBF };
     statsFile.write(reinterpret_cast<const char*>(bom), sizeof(bom));
@@ -296,16 +300,16 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     std::vector<HANDLE> threads(numThreads);
 
     for (int i = 0; i < numThreads; i++) {
-    WorkerData* data = new WorkerData{ hwnd};
-    threads[i] = CreateThread(
-        NULL, 
-        0, 
-        WorkerThread, 
-        data,  // передаем структуру данных
-        0, 
-        NULL
-    );
-}
+        WorkerData* data = new WorkerData{ hwnd };
+        threads[i] = CreateThread(
+            NULL,
+            0,
+            WorkerThread,
+            data,  // передаем структуру данных
+            0,
+            NULL
+        );
+    }
 
     // Добавляем файлы в очередь
     ListFiles(directoryPath, hwnd);
@@ -322,15 +326,23 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     for (HANDLE thread : threads) {
         CloseHandle(thread);
     }
+    sortedFrequencyInFiles.assign(globalFrequency.begin(), globalFrequency.end());
+    customSort(sortedFrequencyInFiles);
+    auto endTime = std::chrono::system_clock::now();
+    std::chrono::duration<double> duration = endTime - startTime;
+    wchar_t durationStr[50];
+    swprintf(durationStr, sizeof(durationStr) / sizeof(wchar_t), L"Анализ окончен. Длительность: %.2f секунд", duration.count());
+    SetWindowText(hwndStatusText, durationStr);
+    ListView_SetItemCount(hwndListView, sortedFrequencyInFiles.size());
     SendMessage(hwndListView, WM_SETREDRAW, FALSE, 0);
-    UpdateListView();
+
+    //UpdateListView(sortedFrequencyInFiles);
     RedrawWindow(hwndListView, NULL, NULL, RDW_INVALIDATE);
     SendMessage(hwndListView, WM_SETREDRAW, TRUE, 0);
     statsFile << "Character frequency statistics:\n";
-    SaveStatistics(statsFile, globalFrequency, totalSymbolCount);  // Передаем statsFile в SaveStatistics
+    SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount);  // Передаем statsFile в SaveStatistics
 
-    auto endTime = std::chrono::system_clock::now();
-    std::chrono::duration<double> duration = endTime - startTime;
+
 
     logFile.close();
     statsFile.close();
@@ -364,7 +376,7 @@ void StartAnalysis(HWND hwnd) {
     }
 
     // Получаем выбранный фильтр
-   
+
 
     // Открытие лог-файла и файла статистики
     logFile.open("analysis_log.txt", std::ios::out | std::ios::trunc);
@@ -396,7 +408,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE:
         CreateListView(hwnd);
         CreateComboBox(hwnd);
-
+        hwndStatusText = CreateWindow(L"STATIC", L"",
+            WS_CHILD | WS_VISIBLE | SS_CENTER,
+            250, 50, 200, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
         // Поле ввода пути
         hwndPathInput = CreateWindow(L"EDIT", L"",
             WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT,
@@ -443,6 +457,52 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+
+    case WM_NOTIFY: {
+        if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
+            NMLVDISPINFO* pDispInfo = (NMLVDISPINFO*)lParam;
+            LVITEM* pItem = &pDispInfo->item;
+
+            // Проверяем, что элемент запрашивается для отображения
+            if (pItem->mask & LVIF_TEXT) {
+                int index = pItem->iItem;
+
+                // Проверка, что индекс в пределах допустимого диапазона
+                if (index >= 0 && index < sortedFrequencyInFiles.size()) {
+                    char32_t symbol = sortedFrequencyInFiles[index].first;
+                    uint64_t count = sortedFrequencyInFiles[index].second;
+
+                    std::wstring utf16Symbol = toUtf16(toUtf8(symbol));
+                    double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
+                    wchar_t buffer[256];
+                    switch (pItem->iSubItem) {
+                    case 0: // Символ
+                        wcsncpy_s(pItem->pszText, pItem->cchTextMax, utf16Symbol.c_str(), _TRUNCATE);
+                        break;
+                    case 1: // Количество
+                        swprintf(buffer, 256, L"%llu", count);
+                        wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
+                        break;
+                    case 2: // Процент
+
+                        swprintf(buffer, 256, L"%.8f", percentage);
+                        wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
+                        break;
+                    case 3:
+                        swprintf(buffer, 256, L"U+%04X", symbol);
+                        wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
+                        break;
+                    case 4:
+                        swprintf(buffer, 256, L"0x%04X", symbol);
+                        wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    }
+
     case WM_UPDATE_PROGRESS:
     {
         // Получаем размер глобальной очереди файлов
@@ -454,6 +514,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         if (totalFindFiles > 0) {
             int progress = static_cast<int>((static_cast<float>(fileAnalized) / totalFindFiles) * 100);
             SendMessage(hwndProgressBar, PBM_SETPOS, progress, 0); // Обновляем прогресс-бар
+
         }
     }
     break;
