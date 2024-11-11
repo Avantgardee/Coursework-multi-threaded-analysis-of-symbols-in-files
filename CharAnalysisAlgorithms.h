@@ -16,7 +16,7 @@
 #include <sstream>
 #include <iomanip>
 #include <locale>
-#include <codecvt> // Для конвертации кодировок
+#include <codecvt> 
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -29,11 +29,11 @@
 std::string toUtf8(char32_t symbol);
 template<typename T>
 void merge(std::vector<T>& arr, std::vector<T>& temp, int left, int mid, int right) {
-    int i = left;      // Начало первой половины
-    int j = mid + 1;   // Начало второй половины
-    int k = left;      // Начало для временного массива
 
-    // Слияние двух половин
+    int i = left;      
+    int j = mid + 1;   
+    int k = left;      
+
     while (i <= mid && j <= right) {
         if (arr[i].second > arr[j].second) {
             temp[k] = arr[i];
@@ -46,27 +46,21 @@ void merge(std::vector<T>& arr, std::vector<T>& temp, int left, int mid, int rig
         ++k;
     }
 
-    // Копируем оставшиеся элементы из первой половины
     while (i <= mid) {
         temp[k] = arr[i];
         ++i;
         ++k;
     }
 
-    // Копируем оставшиеся элементы из второй половины
     while (j <= right) {
         temp[k] = arr[j];
         ++j;
         ++k;
     }
-
-    // Копируем временный массив обратно в основной
     for (int l = left; l <= right; ++l) {
         arr[l] = temp[l];
     }
 }
-
-// Итеративная функция сортировки слиянием
 template<typename T>
 void mergeSortIterative(std::vector<T>& arr) {
     int n = arr.size();
@@ -81,11 +75,12 @@ void mergeSortIterative(std::vector<T>& arr) {
     }
 }
 
-// Функция для сортировки с использованием итеративной сортировки слиянием
 template<typename T>
 void customSort(std::vector<T>& arr) {
     if (!arr.empty()) {
         mergeSortIterative(arr);
     }
 }
+
 void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount);
+

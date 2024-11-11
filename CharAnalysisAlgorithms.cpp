@@ -1,4 +1,3 @@
-
 #define _CRT_SECURE_NO_WARNINGS
 #include "CharAnalysisAlgorithms.h"
 
@@ -71,7 +70,7 @@ void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32
         double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
         sum += percentage;
         statsFile << toUtf8(symbol) << " | Count: " << std::dec << count
-            << " (" << std::fixed << std::setprecision(2) << percentage << "%)"
+            << " (" << std::fixed << std::setprecision(8) << percentage << "%)"
             << " - Unicode: U+" << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << static_cast<uint32_t>(symbol)
             << " - Hex: 0x" << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << static_cast<uint32_t>(symbol)
             << "\n";
@@ -79,6 +78,5 @@ void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32
     statsFile << "  Sum: " << sum;
     statsFile.flush();
 }
-
 
 
