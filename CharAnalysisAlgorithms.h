@@ -29,6 +29,7 @@
 std::string toUtf8(char32_t symbol);
 template<typename T>
 void merge(std::vector<T>& arr, std::vector<T>& temp, int left, int mid, int right) {
+
     int i = left;      
     int j = mid + 1;   
     int k = left;      
@@ -56,12 +57,10 @@ void merge(std::vector<T>& arr, std::vector<T>& temp, int left, int mid, int rig
         ++j;
         ++k;
     }
-
     for (int l = left; l <= right; ++l) {
         arr[l] = temp[l];
     }
 }
-
 template<typename T>
 void mergeSortIterative(std::vector<T>& arr) {
     int n = arr.size();
@@ -76,11 +75,12 @@ void mergeSortIterative(std::vector<T>& arr) {
     }
 }
 
-
 template<typename T>
 void customSort(std::vector<T>& arr) {
     if (!arr.empty()) {
         mergeSortIterative(arr);
     }
 }
+
 void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount);
+

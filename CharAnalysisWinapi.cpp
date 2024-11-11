@@ -326,6 +326,7 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     for (HANDLE thread : threads) {
         CloseHandle(thread);
     }
+
     sortedFrequencyInFiles.assign(globalFrequency.begin(), globalFrequency.end());
     customSort(sortedFrequencyInFiles);
     auto endTime = std::chrono::system_clock::now();
@@ -337,12 +338,11 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     SendMessage(hwndListView, WM_SETREDRAW, FALSE, 0);
 
     //UpdateListView(sortedFrequencyInFiles);
+
     RedrawWindow(hwndListView, NULL, NULL, RDW_INVALIDATE);
     SendMessage(hwndListView, WM_SETREDRAW, TRUE, 0);
     statsFile << "Character frequency statistics:\n";
     SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount);  // Передаем statsFile в SaveStatistics
-
-
 
     logFile.close();
     statsFile.close();
