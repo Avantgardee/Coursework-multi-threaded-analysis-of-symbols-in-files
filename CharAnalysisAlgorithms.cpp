@@ -3,37 +3,6 @@
 
 
 
-
-
-
-//bool SelectSymbolGroup() {
-//    std::wcout << L"Available symbol groups:\n";
-//    int i = 1;
-//    for (const auto& [name, ranges] : symbolGroups) {
-//        std::wcout << i++ << L". " << name << L"\n";
-//    }
-//    std::wcout << i << L". All UTF-8 symbols\n"; // Добавляем опцию для всех символов
-//
-//    std::wcout << L"Enter the number of the symbol group: ";
-//    int choice;
-//    std::wcin >> choice;
-//
-//    if (choice < 1 || choice > symbolGroups.size() + 1) {
-//        std::wcerr << L"Invalid choice. Exiting.\n";
-//        return false;
-//    }
-//
-//    if (choice == symbolGroups.size() + 1) {
-//        allSymbols = true; // Устанавливаем флаг для всех символов
-//        return true;
-//    }
-//
-//    auto it = symbolGroups.begin();
-//    std::advance(it, choice - 1);
-//    selectedRanges = it->second;
-//    return true;
-//}
-
 // Фильтрует символы в выбранном диапазоне
 
 std::string toUtf8(char32_t symbol) {
@@ -61,7 +30,7 @@ std::string toUtf8(char32_t symbol) {
 
 
 
-void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount) {
+void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount, HWND hwndStatusText) {
     statsFile << "\xEF\xBB\xBF"; // Добавление BOM для корректного отображения UTF-8
 
 
@@ -77,6 +46,38 @@ void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32
     }
     statsFile << "  Sum: " << sum;
     statsFile.flush();
+    SetWindowText(hwndStatusText, L"Сохранено в файл");
 }
+
+std::wstring FormatFileSize(std::streamsize fileSize) {
+    double KB = 1024.0;
+    double MB = KB * 1024.0;
+    double GB = MB * 1024.0;
+
+    std::wostringstream sizeStream;
+
+    if (fileSize >= GB) {
+        sizeStream << std::fixed << std::setprecision(2) << (fileSize / GB) << L" GB";
+    }
+    else if (fileSize >= MB) {
+        sizeStream << std::fixed << std::setprecision(2) << (fileSize / MB) << L" MB";
+    }
+    else if (fileSize >= KB) {
+        sizeStream << std::fixed << std::setprecision(2) << (fileSize / KB) << L" KB";
+    }
+    else {
+        sizeStream << fileSize << L" bytes";
+    }
+
+    return sizeStream.str();
+}
+
+std::wstring toUtf16(const std::string& utf8Str) {
+    int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, NULL, 0);
+    std::wstring wstr(wlen, L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, &wstr[0], wlen);
+    return wstr;
+}
+
 
 

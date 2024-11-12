@@ -59,6 +59,8 @@ std::vector<std::pair<char32_t, uint64_t>> sortedFrequencyInFiles;
 HWND hwndPathInput, hwndComboBox, hwndListView;
 HWND hwndProgressBar;
 HWND hwndStatusText;
+HWND hwndStatusSaveText;
+HWND hwndListViewForLog;
 bool IsInSelectedRanges(char32_t symbol) {
     if (allSymbols) {
         return true; // Если выбран пункт для всех символов, пропускаем проверку
@@ -70,21 +72,52 @@ bool IsInSelectedRanges(char32_t symbol) {
     }
     return false;
 }
-std::wstring toUtf16(const std::string& utf8Str) {
-    int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, NULL, 0);
-    std::wstring wstr(wlen, L'\0');
-    MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, &wstr[0], wlen);
-    return wstr;
+
+std::wstring GetSymbolGroup(char32_t symbol) {
+    for (const auto& group : symbolGroups) {
+        for (const auto& range : group.second) {
+            if (symbol >= range.first && symbol <= range.second) {
+                return group.first;
+            }
+        }
+    }
+    return L"Other symbol"; // Если символ не принадлежит ни одной из указанных групп
+}
+
+
+
+void AddItemToListView(HWND hListView, const std::wstring& filePath, const std::wstring& fileSizeStr, const std::wstring& endTimeStr, const std::wstring& durationStr) {
+    std::lock_guard<std::mutex> lock(mtx); // Обеспечиваем потокобезопасность при записи в ListView
+
+    LVITEM lvItem = {};
+    lvItem.mask = LVIF_TEXT;
+
+    // Путь к файлу
+    lvItem.pszText = const_cast<LPWSTR>(filePath.c_str());
+    int itemIndex = ListView_InsertItem(hListView, &lvItem);
+
+    // Размер файла
+    ListView_SetItemText(hListView, itemIndex, 1, const_cast<LPWSTR>(fileSizeStr.c_str()));
+
+    // Время окончания
+    ListView_SetItemText(hListView, itemIndex, 2, const_cast<LPWSTR>(endTimeStr.c_str()));
+
+    // Продолжительность
+    ListView_SetItemText(hListView, itemIndex, 3, const_cast<LPWSTR>(durationStr.c_str()));
 }
 
 void AnalyzeFile(const std::wstring& filePath) {
     auto start = std::chrono::system_clock::now();
 
-    std::ifstream file(filePath, std::ios::binary);
+    // Определение размера файла
+    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::wcerr << L"Error opening file: " << filePath << std::endl;
         return;
     }
+
+    std::streamsize fileSize = file.tellg(); // Получаем размер файла
+    file.seekg(0, std::ios::beg);
 
     std::unordered_map<char32_t, uint64_t> localFrequency;
     char ch;
@@ -115,7 +148,6 @@ void AnalyzeFile(const std::wstring& filePath) {
             byte = static_cast<unsigned char>(ch);
             symbol = (symbol << 6) | (byte & 0x3F);
         }
-        // Учитываем только символы в выбранном диапазоне
         if (IsInSelectedRanges(symbol)) {
             localFrequency[symbol]++;
         }
@@ -137,16 +169,29 @@ void AnalyzeFile(const std::wstring& filePath) {
     tm timeInfo;
     localtime_s(&timeInfo, &endTime);
 
+    std::wostringstream timeStream;
+    timeStream << std::put_time(&timeInfo, L"%Y-%m-%d %H:%M:%S");
+    std::wstring endTimeStr = timeStream.str();
+
+    std::wostringstream durationStream;
+    durationStream << duration.count() << L" seconds";
+    std::wstring durationStr = durationStream.str();
+
+    std::wstring fileSizeStr = FormatFileSize(fileSize);
 
     {
         std::lock_guard<std::mutex> lock(mtx);
         std::wostringstream logStream;
         logStream << L"File: " << filePath
-            << L" | End Time: " << std::put_time(&timeInfo, L"%Y-%m-%d %H:%M:%S")
-            << L" | Duration: " << duration.count() << L" seconds\n";
+            << L" | Size: " << fileSizeStr
+            << L" | End Time: " << endTimeStr
+            << L" | Duration: " << durationStr << L"\n";
         logFile << logStream.str();
         logFile.flush();
     }
+
+    // Вызов AddItemToListView с передачей новых параметров
+    AddItemToListView(hwndListViewForLog, filePath, fileSizeStr, endTimeStr, durationStr);
 }
 
 DWORD WINAPI WorkerThread(LPVOID param) {
@@ -204,41 +249,14 @@ void ListFiles(const std::wstring& directoryPath, HWND hwnd) {
     SendMessage(hwnd, WM_SET_LENGTH, totalFindFiles, NULL); // Обновляем прогресс-бар
 }
 
-void AddItemToListView(HWND hListView, int index, char32_t symbol, uint64_t count, uint64_t totalCount) {
-    LVITEM lvItem = { };
-    lvItem.mask = LVIF_TEXT;
-    lvItem.iItem = index;
 
-    // Символ (сначала отображаем сам символ)
-    std::wstring utf16Symbol = toUtf16(toUtf8(symbol));
-    lvItem.pszText = const_cast<LPWSTR>(utf16Symbol.c_str());
-    int itemIndex = ListView_InsertItem(hListView, &lvItem);
-
-    // Количество
-    wchar_t buffer[100];
-    swprintf(buffer, 100, L"%llu", count);
-    ListView_SetItemText(hListView, itemIndex, 1, buffer);
-
-    // Процент
-    double percentage = (static_cast<double>(count) / totalCount) * 100.0;
-    swprintf(buffer, 100, L"%.4f", percentage);
-    ListView_SetItemText(hListView, itemIndex, 2, buffer);
-
-    // Unicode код
-    swprintf(buffer, 100, L"U+%04X", symbol);
-    ListView_SetItemText(hListView, itemIndex, 3, buffer);
-
-    // Hex код
-    swprintf(buffer, 100, L"0x%04X", symbol);
-    ListView_SetItemText(hListView, itemIndex, 4, buffer);
-}
 
 void AddColumns(HWND hListView) {
     LVCOLUMN lvCol = { };
     lvCol.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
 
     // Столбец: Символ
-    lvCol.cx = 150;
+    lvCol.cx = 75;
     lvCol.pszText = (LPWSTR)L"Symbol";
     ListView_InsertColumn(hListView, 0, &lvCol);
 
@@ -253,7 +271,7 @@ void AddColumns(HWND hListView) {
     ListView_InsertColumn(hListView, 2, &lvCol);
 
     // Столбец: Unicode код
-    lvCol.cx = 150;
+    lvCol.cx = 100;
     lvCol.pszText = (LPWSTR)L"Unicode";
     ListView_InsertColumn(hListView, 3, &lvCol);
 
@@ -261,6 +279,10 @@ void AddColumns(HWND hListView) {
     lvCol.cx = 100;
     lvCol.pszText = (LPWSTR)L"Hex";
     ListView_InsertColumn(hListView, 4, &lvCol);
+    //группа
+    lvCol.cx = 125;
+    lvCol.pszText = (LPWSTR)L"Group";
+    ListView_InsertColumn(hListView, 5, &lvCol);
 }
 
 // Функция для создания ListView
@@ -271,21 +293,6 @@ void CreateListView(HWND hwndParent) {
     ShowWindow(hwndListView, TRUE);
     AddColumns(hwndListView);
 }
-
-
-
-// Функция для обновления списка в ListView
-void UpdateListView(const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency) {
-    int index = 0;
-    // Преобразование в строку
-    for (const auto& [symbol, count] : sortedFrequency) {
-        double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
-
-        AddItemToListView(hwndListView, index, symbol, count, totalSymbolCount);
-        index++;
-    }
-}
-
 
 void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile, std::ofstream& statsFile, HWND hwnd) {
 
@@ -342,14 +349,12 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     RedrawWindow(hwndListView, NULL, NULL, RDW_INVALIDATE);
     SendMessage(hwndListView, WM_SETREDRAW, TRUE, 0);
     statsFile << "Character frequency statistics:\n";
-    SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount);  // Передаем statsFile в SaveStatistics
+    SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount, hwndStatusSaveText);  // Передаем statsFile в SaveStatistics
 
     logFile.close();
     statsFile.close();
 
 }
-
-
 
 // Функция для создания комбобокса
 void CreateComboBox(HWND hwndParent) {
@@ -402,15 +407,52 @@ void StartAnalysis(HWND hwnd) {
 
 }
 
+void AddColumnsForLog(HWND hListView) {
+    LVCOLUMN lvCol = { };
+    lvCol.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+
+    // Столбец: путь к файлу
+    lvCol.cx = 350;
+    lvCol.pszText = (LPWSTR)L"File";
+    ListView_InsertColumn(hListView, 0, &lvCol);
+
+
+    lvCol.cx = 75;
+    lvCol.pszText = (LPWSTR)L"Size";
+    ListView_InsertColumn(hListView, 1, &lvCol);
+
+    // время окончания
+    lvCol.cx = 120;
+    lvCol.pszText = (LPWSTR)L"End time";
+    ListView_InsertColumn(hListView, 2, &lvCol);
+
+    // продолжительность
+    lvCol.cx = 120;
+    lvCol.pszText = (LPWSTR)L"Duration";
+    ListView_InsertColumn(hListView, 3, &lvCol);
+}
+
+void CreateListViewForLog(HWND hwndParent) {
+    hwndListViewForLog = CreateWindowEx(0, WC_LISTVIEW, NULL,
+        WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL | WS_BORDER,
+        680, 100, 675, 300, hwndParent, NULL, GetModuleHandle(NULL), NULL);
+    ShowWindow(hwndListViewForLog, TRUE);
+    AddColumnsForLog(hwndListViewForLog);
+}
+
 // Обработчик оконных сообщений
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE:
         CreateListView(hwnd);
         CreateComboBox(hwnd);
+        CreateListViewForLog(hwnd);
         hwndStatusText = CreateWindow(L"STATIC", L"",
             WS_CHILD | WS_VISIBLE | SS_CENTER,
             250, 50, 200, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
+        hwndStatusSaveText = CreateWindow(L"STATIC", L"",
+            WS_CHILD | WS_VISIBLE | SS_CENTER,
+            470, 50, 200, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
         // Поле ввода пути
         hwndPathInput = CreateWindow(L"EDIT", L"",
             WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT,
@@ -496,6 +538,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                         swprintf(buffer, 256, L"0x%04X", symbol);
                         wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
                         break;
+                    
+                    case 5:
+                        std::wstring group = GetSymbolGroup(symbol);
+                        wcsncpy_s(pItem->pszText, pItem->cchTextMax, group.c_str(), _TRUNCATE);
+                        break;
                     }
                 }
             }
@@ -518,13 +565,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         }
     }
     break;
-    //case WM_SET_LENGTH:
-    //{
-    //    // Получаем размер глобальной очереди файлов
-    //    totalFindFiles = static_cast<int>(wParam); // Количество найденых файлов
 
-    //}
-    break;
     default:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
@@ -546,7 +587,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     // Создание окна
     HWND hwnd = CreateWindow(wc.lpszClassName, L"Symbol Frequency Analyzer",
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 800, 500, NULL, NULL, wc.hInstance, NULL);
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1400, 900, NULL, NULL, wc.hInstance, NULL);
 
     // Главный цикл обработки сообщений
     MSG msg;
