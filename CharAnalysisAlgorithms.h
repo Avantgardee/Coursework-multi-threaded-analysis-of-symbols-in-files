@@ -82,5 +82,7 @@ void customSort(std::vector<T>& arr) {
     }
 }
 
-void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount);
+void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount, HWND hwndStatusText);
 
+std::wstring toUtf16(const std::string& utf8Str);
+std::wstring FormatFileSize(std::streamsize fileSize);
