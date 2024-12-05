@@ -1,4 +1,4 @@
-
+#pragma once
 #define SYMBOL_ANALYZER_H
 
 #include <windows.h>
@@ -20,12 +20,6 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-// Grouping symbols by ranges
-
-// Mutexes and shared variables
-
-
-// Function declarations
 std::string toUtf8(char32_t symbol);
 template<typename T>
 void merge(std::vector<T>& arr, std::vector<T>& temp, int left, int mid, int right) {
@@ -82,7 +76,7 @@ void customSort(std::vector<T>& arr) {
     }
 }
 
-void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount, HWND hwndStatusText);
+void SaveStatistics(std::ofstream& statsFile, std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount, bool& isSaving);
 
 std::wstring toUtf16(const std::string& utf8Str);
 std::wstring FormatFileSize(std::streamsize fileSize);

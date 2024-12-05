@@ -30,12 +30,18 @@
     <ClInclude Include="CharAnalysisAlgorithms.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="UIFunctionsAndMethods.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharAnalysisWinapi.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="CharAnalysisAlgorithms.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="UIFunctionsAndMethods.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

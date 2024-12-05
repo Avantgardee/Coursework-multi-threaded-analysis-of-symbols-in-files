@@ -1,10 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "CharAnalysisAlgorithms.h"
 
-
-
-// Фильтрует символы в выбранном диапазоне
-
 std::string toUtf8(char32_t symbol) {
     std::string utf8Char;
     if (symbol < 0x80) {
@@ -28,25 +24,43 @@ std::string toUtf8(char32_t symbol) {
     return utf8Char;
 }
 
-
-
-void SaveStatistics(std::ofstream& statsFile, const std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount, HWND hwndStatusText) {
-    statsFile << "\xEF\xBB\xBF"; // Добавление BOM для корректного отображения UTF-8
-
-
+void SaveStatistics(std::ofstream& statsFile, std::vector<std::pair<char32_t, uint64_t>>& sortedFrequency, uint64_t totalSymbolCount, bool &isSaving) {
+    statsFile << "\xEF\xBB\xBF";
     double sum = 0;
-    for (const auto& [symbol, count] : sortedFrequency) {
-        double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
-        sum += percentage;
-        statsFile << toUtf8(symbol) << " | Count: " << std::dec << count
-            << " (" << std::fixed << std::setprecision(8) << percentage << "%)"
-            << " - Unicode: U+" << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << static_cast<uint32_t>(symbol)
-            << " - Hex: 0x" << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << static_cast<uint32_t>(symbol)
-            << "\n";
+    
+       
+    if (isSaving) {
+        for (const auto& [symbol, count] : sortedFrequency) {
+            if (sortedFrequency.empty()) {
+                sortedFrequency.clear();
+                statsFile << "Error: sortedFrequency is empty.\n";
+                statsFile.flush();
+                return;
+            }
+
+            if (totalSymbolCount == 0) {
+                statsFile << "Error: totalSymbolCount is zero.\n";
+                statsFile.flush();
+                return;
+            }
+
+            if (count == 0) {
+                statsFile << "Error: count is zero for symbol " << toUtf8(symbol) << "\n";
+                break;
+            }
+            double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
+            sum += percentage;
+            statsFile << toUtf8(symbol) << " | Count: " << std::dec << count
+                << " (" << std::fixed << std::setprecision(8) << percentage << "%)"
+                << " - Unicode: U+" << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << static_cast<uint32_t>(symbol)
+                << " - Hex: 0x" << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << static_cast<uint32_t>(symbol)
+                << "\n";
+        }
     }
+    
     statsFile << "  Sum: " << sum;
     statsFile.flush();
-    SetWindowText(hwndStatusText, L"Сохранено в файл");
+    
 }
 
 std::wstring FormatFileSize(std::streamsize fileSize) {

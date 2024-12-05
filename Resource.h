@@ -1,6 +1,4 @@
-﻿//{{NO_DEPENDENCIES}}
-// Включаемый файл, созданный в Microsoft Visual C++.
-// Используется CharAnalysisWinapi.rc
+﻿
 
 #define IDS_APP_TITLE			103
 
@@ -16,8 +14,7 @@
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1
 #endif
-// Следующие стандартные значения для новых объектов
-//
+
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 

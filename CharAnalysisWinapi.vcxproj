@@ -133,10 +133,12 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UIFunctionsAndMethods.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharAnalysisAlgorithms.cpp" />
     <ClCompile Include="CharAnalysisWinapi.cpp" />
+    <ClCompile Include="UIFunctionsAndMethods.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CharAnalysisWinapi.rc" />
