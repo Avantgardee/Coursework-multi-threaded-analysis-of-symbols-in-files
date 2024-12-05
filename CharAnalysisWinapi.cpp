@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <filesystem>
 #include <mutex>
 #include <queue>
@@ -17,19 +18,29 @@
 #include <sstream>
 #include <iomanip>
 #include <locale>
-#include <codecvt> // Для конвертации кодировок
+#include <codecvt> 
+#include "UIFunctionsAndMethods.h"
 #include "CharAnalysisAlgorithms.h"
+
 #pragma comment(lib, "comctl32.lib")
 
 #define _CRT_SECURE_NO_WARNINGS
 
+struct ThreadData {
+    std::wstring filePath;
+    uint64_t startByte;
+    uint64_t endByte;
+    std::unordered_map<char32_t, uint64_t>& localFrequency;  
 
+    ThreadData(std::wstring path, uint64_t start, uint64_t end, std::unordered_map<char32_t, uint64_t>& freq)
+        : filePath(std::move(path)), startByte(start), endByte(end), localFrequency(freq) {}
+};
 struct WorkerData {
     HWND hwnd;
 };
-// Данные для фильтров
+
 std::vector<std::pair<std::wstring, std::vector<std::pair<char32_t, char32_t>>>> symbolGroups = {
-    {L"Latin", {{0x0000, 0x007F}, {0x0080, 0x00FF}, {0x0100, 0x017F}, {0x0180, 0x024F}}},
+    {L"Latin", {{0x0000, 0x002F}, {0x003A, 0x007F}, {0x0080, 0x00FF}, {0x0100, 0x017F}, {0x0180, 0x024F}}},
     {L"Digits and math", {{0x0030, 0x0039}, {0x2200, 0x22FF}, {0x2A00, 0x2AFF}}},
     {L"Cyrillic", {{0x0400, 0x04FF}, {0x0500, 0x052F}}},
     {L"Greek Alphabet", {{0x0370, 0x03FF}, {0x1F00, 0x1FFF}}},
@@ -38,10 +49,10 @@ std::vector<std::pair<std::wstring, std::vector<std::pair<char32_t, char32_t>>>>
     {L"Chinese and Japanese", {{0x4E00, 0x9FFF}, {0x3040, 0x30FF}, {0xAC00, 0xD7AF}}},
     {L"Emoji", {{0x1F600, 0x1F64F}, {0x1F300, 0x1F5FF}, {0x1F680, 0x1F6FF}}},
     {L"Space and Punctuation Symbols", {{0x2000, 0x206F}, {0x2190, 0x21FF}, {0x20A0, 0x20CF}}},
-    {L"All UTF - 8 symbols", {} }
+    {L"All groups symbols", {} }
 };
 
-// Глобальные переменные
+
 std::mutex mtx;
 std::condition_variable cv;
 std::unordered_map<char32_t, uint64_t> globalFrequency;
@@ -55,15 +66,29 @@ uint64_t totalSymbolCount;
 uint64_t fileAnalized;
 uint64_t totalFindFiles = 0;
 std::vector<std::pair<char32_t, uint64_t>> sortedFrequencyInFiles;
-// UI элементы
+std::map<std::wstring, uint64_t> groupFrequencyMap;
 HWND hwndPathInput, hwndComboBox, hwndListView;
 HWND hwndProgressBar;
 HWND hwndStatusText;
 HWND hwndStatusSaveText;
 HWND hwndListViewForLog;
+HWND hwndBtnPie;
+HWND hwndChartWindow;
+HWND hwndSlider;
+std::wstring saveStatsPath;
+std::wstring saveFilesInfoPath;
+int numThreads;
+std::wstring baseText = L"Сохраняется в файл";
+bool isDrawPieChart;
+bool isAllSaved = true;
+const UINT_PTR TIMER_ID = 1;
+int dotCount = 0; 
+bool isLoading = false;
+bool isSaving = true;
+
 bool IsInSelectedRanges(char32_t symbol) {
     if (allSymbols) {
-        return true; // Если выбран пункт для всех символов, пропускаем проверку
+        return true; 
     }
     for (const auto& range : selectedRanges) {
         if (symbol >= range.first && symbol <= range.second) {
@@ -81,42 +106,19 @@ std::wstring GetSymbolGroup(char32_t symbol) {
             }
         }
     }
-    return L"Other symbol"; // Если символ не принадлежит ни одной из указанных групп
+    return L"Other symbol"; 
 }
 
-
-
-void AddItemToListView(HWND hListView, const std::wstring& filePath, const std::wstring& fileSizeStr, const std::wstring& endTimeStr, const std::wstring& durationStr) {
-    std::lock_guard<std::mutex> lock(mtx); // Обеспечиваем потокобезопасность при записи в ListView
-
-    LVITEM lvItem = {};
-    lvItem.mask = LVIF_TEXT;
-
-    // Путь к файлу
-    lvItem.pszText = const_cast<LPWSTR>(filePath.c_str());
-    int itemIndex = ListView_InsertItem(hListView, &lvItem);
-
-    // Размер файла
-    ListView_SetItemText(hListView, itemIndex, 1, const_cast<LPWSTR>(fileSizeStr.c_str()));
-
-    // Время окончания
-    ListView_SetItemText(hListView, itemIndex, 2, const_cast<LPWSTR>(endTimeStr.c_str()));
-
-    // Продолжительность
-    ListView_SetItemText(hListView, itemIndex, 3, const_cast<LPWSTR>(durationStr.c_str()));
-}
-
-void AnalyzeFile(const std::wstring& filePath) {
+void AnalyzeFileSingleThreaded(const std::wstring& filePath) {
     auto start = std::chrono::system_clock::now();
 
-    // Определение размера файла
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::wcerr << L"Error opening file: " << filePath << std::endl;
         return;
     }
 
-    std::streamsize fileSize = file.tellg(); // Получаем размер файла
+    std::streamsize fileSize = file.tellg();
     file.seekg(0, std::ios::beg);
 
     std::unordered_map<char32_t, uint64_t> localFrequency;
@@ -190,8 +192,7 @@ void AnalyzeFile(const std::wstring& filePath) {
         logFile.flush();
     }
 
-    // Вызов AddItemToListView с передачей новых параметров
-    AddItemToListView(hwndListViewForLog, filePath, fileSizeStr, endTimeStr, durationStr);
+    AddItemToListView(hwndListViewForLog, filePath, fileSizeStr, endTimeStr, durationStr,mtx);
 }
 
 DWORD WINAPI WorkerThread(LPVOID param) {
@@ -210,11 +211,10 @@ DWORD WINAPI WorkerThread(LPVOID param) {
             fileQueue.pop();
         }
 
-        AnalyzeFile(filePath);
+        AnalyzeFileSingleThreaded(filePath);
 
 
         PostMessage(data->hwnd, WM_UPDATE_PROGRESS, NULL, NULL);
-        // Отправляем сообщение в главный поток для обновления прогресс-бара
 
     }
 
@@ -236,7 +236,7 @@ void ListFiles(const std::wstring& directoryPath, HWND hwnd) {
 
         if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
             if (fileName != L"." && fileName != L"..") {
-                ListFiles(fullPath, hwnd); // Рекурсивный вызов для обхода поддиректорий
+                ListFiles(fullPath, hwnd);
             }
         }
         else {
@@ -246,64 +246,17 @@ void ListFiles(const std::wstring& directoryPath, HWND hwnd) {
         }
     } while (FindNextFileW(hFind, &findFileData) != 0);
     FindClose(hFind);
-    SendMessage(hwnd, WM_SET_LENGTH, totalFindFiles, NULL); // Обновляем прогресс-бар
-}
-
-
-
-void AddColumns(HWND hListView) {
-    LVCOLUMN lvCol = { };
-    lvCol.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-
-    // Столбец: Символ
-    lvCol.cx = 75;
-    lvCol.pszText = (LPWSTR)L"Symbol";
-    ListView_InsertColumn(hListView, 0, &lvCol);
-
-    // Столбец: Количество
-    lvCol.cx = 100;
-    lvCol.pszText = (LPWSTR)L"Count";
-    ListView_InsertColumn(hListView, 1, &lvCol);
-
-    // Столбец: Процент
-    lvCol.cx = 100;
-    lvCol.pszText = (LPWSTR)L"Percentage";
-    ListView_InsertColumn(hListView, 2, &lvCol);
-
-    // Столбец: Unicode код
-    lvCol.cx = 100;
-    lvCol.pszText = (LPWSTR)L"Unicode";
-    ListView_InsertColumn(hListView, 3, &lvCol);
-
-    // Столбец: Hex код
-    lvCol.cx = 100;
-    lvCol.pszText = (LPWSTR)L"Hex";
-    ListView_InsertColumn(hListView, 4, &lvCol);
-    //группа
-    lvCol.cx = 125;
-    lvCol.pszText = (LPWSTR)L"Group";
-    ListView_InsertColumn(hListView, 5, &lvCol);
-}
-
-// Функция для создания ListView
-void CreateListView(HWND hwndParent) {
-    hwndListView = CreateWindowEx(0, WC_LISTVIEW, NULL,
-        WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL | WS_BORDER | LVS_OWNERDATA,
-        70, 100, 600, 300, hwndParent, NULL, GetModuleHandle(NULL), NULL);
-    ShowWindow(hwndListView, TRUE);
-    AddColumns(hwndListView);
+    SendMessage(hwnd, WM_SET_LENGTH, totalFindFiles, NULL);
 }
 
 void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile, std::ofstream& statsFile, HWND hwnd) {
-
-
+    isAllSaved = false;
     auto startTime = std::chrono::system_clock::now();
 
-    // Запись BOM для UTF-8
     unsigned char bom[3] = { 0xEF, 0xBB, 0xBF };
     statsFile.write(reinterpret_cast<const char*>(bom), sizeof(bom));
 
-    int numThreads = std::thread::hardware_concurrency();
+    numThreads = std::thread::hardware_concurrency();
     std::vector<HANDLE> threads(numThreads);
 
     for (int i = 0; i < numThreads; i++) {
@@ -312,22 +265,19 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
             NULL,
             0,
             WorkerThread,
-            data,  // передаем структуру данных
+            data,  
             0,
             NULL
         );
     }
 
-    // Добавляем файлы в очередь
     ListFiles(directoryPath, hwnd);
-
     {
         std::lock_guard<std::mutex> lock(mtx);
         doneAddingFiles = true;
     }
     cv.notify_all();
 
-    // Ожидаем завершения всех потоков
     WaitForMultipleObjects(numThreads, threads.data(), TRUE, INFINITE);
 
     for (HANDLE thread : threads) {
@@ -344,53 +294,51 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     ListView_SetItemCount(hwndListView, sortedFrequencyInFiles.size());
     SendMessage(hwndListView, WM_SETREDRAW, FALSE, 0);
 
-    //UpdateListView(sortedFrequencyInFiles);
-
     RedrawWindow(hwndListView, NULL, NULL, RDW_INVALIDATE);
     SendMessage(hwndListView, WM_SETREDRAW, TRUE, 0);
+    EnableWindow(hwndBtnPie, TRUE);
+    isDrawPieChart = true;
     statsFile << "Character frequency statistics:\n";
-    SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount, hwndStatusSaveText);  // Передаем statsFile в SaveStatistics
-
+    isLoading = true;
+    SetWindowText(hwndStatusSaveText, (baseText).c_str());
+    SaveStatistics(statsFile, sortedFrequencyInFiles, totalSymbolCount, isSaving);
+    
+    isLoading = false;
+    SetWindowText(hwndStatusSaveText, L"Стастика сохранена в файл");
     logFile.close();
     statsFile.close();
-
+    isAllSaved = true;
 }
 
-// Функция для создания комбобокса
-void CreateComboBox(HWND hwndParent) {
-    hwndComboBox = CreateWindow(WC_COMBOBOX, L"",
-        WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | CBS_HASSTRINGS | WS_VSCROLL,
-        10, 50, 200, 200, hwndParent, NULL, GetModuleHandle(NULL), NULL);
-
-    for (const auto& [name, _] : symbolGroups) {
-        SendMessage(hwndComboBox, CB_ADDSTRING, 0, (LPARAM)name.c_str());
-    }
-}
-
-// Функция для обработки кнопки запуска анализа
 void StartAnalysis(HWND hwnd) {
-    // Чтение введенного пути
+    isDrawPieChart = false;
+    EnableWindow(hwndBtnPie, FALSE);
+    SetWindowText(hwndStatusText, L" ");
+    SetWindowText(hwndStatusSaveText, L" ");
+    ListView_DeleteAllItems(hwndListView);
+    ListView_DeleteAllItems(hwndListViewForLog);
+    doneAddingFiles = false;
+    SendMessage(hwndProgressBar, PBM_SETPOS, 0, 0);
+    if (hwndChartWindow) {
+        ClearChartArea(hwndChartWindow);
+    }
+   
     wchar_t buffer[1024];
     GetWindowText(hwndPathInput, buffer, 1024);
     std::wstring directoryPath = buffer;
 
-    // Проверка пути
     if (!std::filesystem::exists(directoryPath) || !std::filesystem::is_directory(directoryPath)) {
-        MessageBox(hwnd, L"Invalid directory path!", L"Error", MB_OK | MB_ICONERROR);
+        MessageBox(hwnd, L"Не указана директория для анализа!", L"Ошибка", MB_OK | MB_ICONERROR);
         return;
     }
 
-    // Получаем выбранный фильтр
-
-
-    // Открытие лог-файла и файла статистики
-    logFile.open("analysis_log.txt", std::ios::out | std::ios::trunc);
+    logFile.open(saveFilesInfoPath, std::ios::out | std::ios::trunc);
     if (!logFile.is_open()) {
         std::wcerr << L"Error opening log file." << std::endl;
         return;
     }
     logFile.imbue(std::locale("ru_RU.UTF-8"));
-    statsFile.open("stats.txt", std::ios::out | std::ios::binary | std::ios::trunc); // Очистка файла для статистики
+    statsFile.open(saveStatsPath, std::ios::out | std::ios::binary | std::ios::trunc); 
     if (!statsFile.is_open()) {
         std::wcerr << L"Error opening stats file." << std::endl;
         return;
@@ -403,73 +351,152 @@ void StartAnalysis(HWND hwnd) {
     std::thread analysisThread([=] {
         AnalyzeDirectory(directoryPath, logFile, statsFile, hwnd);
         });
-    analysisThread.detach(); // Отсоединяем поток, чтобы избежать блокировки основного потока интерфейса
+    analysisThread.detach(); 
 
 }
 
-void AddColumnsForLog(HWND hListView) {
-    LVCOLUMN lvCol = { };
-    lvCol.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+LRESULT CALLBACK ChartWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch (msg) {
+    case WM_PAINT: {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
 
-    // Столбец: путь к файлу
-    lvCol.cx = 350;
-    lvCol.pszText = (LPWSTR)L"File";
-    ListView_InsertColumn(hListView, 0, &lvCol);
+        HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
+        FillRect(hdc, &ps.rcPaint, brush);
+        DeleteObject(brush);
 
-
-    lvCol.cx = 75;
-    lvCol.pszText = (LPWSTR)L"Size";
-    ListView_InsertColumn(hListView, 1, &lvCol);
-
-    // время окончания
-    lvCol.cx = 120;
-    lvCol.pszText = (LPWSTR)L"End time";
-    ListView_InsertColumn(hListView, 2, &lvCol);
-
-    // продолжительность
-    lvCol.cx = 120;
-    lvCol.pszText = (LPWSTR)L"Duration";
-    ListView_InsertColumn(hListView, 3, &lvCol);
+        EndPaint(hwnd, &ps);
+        return 0;
+    }
+    }
+    return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-void CreateListViewForLog(HWND hwndParent) {
-    hwndListViewForLog = CreateWindowEx(0, WC_LISTVIEW, NULL,
-        WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL | WS_BORDER,
-        680, 100, 675, 300, hwndParent, NULL, GetModuleHandle(NULL), NULL);
-    ShowWindow(hwndListViewForLog, TRUE);
-    AddColumnsForLog(hwndListViewForLog);
-}
-
-// Обработчик оконных сообщений
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
-    case WM_CREATE:
-        CreateListView(hwnd);
-        CreateComboBox(hwnd);
-        CreateListViewForLog(hwnd);
+    case WM_CREATE : {
+        hwndListView = CreateListView(hwnd);
+        hwndComboBox = CreateComboBox(hwnd, symbolGroups);
+        hwndListViewForLog = CreateListViewForLog(hwnd);
         hwndStatusText = CreateWindow(L"STATIC", L"",
             WS_CHILD | WS_VISIBLE | SS_CENTER,
-            250, 50, 200, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
+            240, 50, 220, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
         hwndStatusSaveText = CreateWindow(L"STATIC", L"",
             WS_CHILD | WS_VISIBLE | SS_CENTER,
-            470, 50, 200, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
-        // Поле ввода пути
+            470, 50, 223, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
+
         hwndPathInput = CreateWindow(L"EDIT", L"",
             WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT,
-            10, 10, 600, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
+            20, 10, 670, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
         hwndProgressBar = CreateWindowEx(0, PROGRESS_CLASS, L"",
             WS_CHILD | WS_VISIBLE | PBS_SMOOTH,
-            10, 400, 600, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
-        // Кнопка старта
-        CreateWindow(L"BUTTON", L"Start Analysis", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-            620, 10, 150, 30, hwnd, (HMENU)1, GetModuleHandle(NULL), NULL);
-        break;
+            20, 90, 675, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
 
+        CreateWindow(L"BUTTON", L"Начать анализ", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+            695, 10, 400, 30, hwnd, (HMENU)1, GetModuleHandle(NULL), NULL);
+        hwndBtnPie = CreateWindow(L"BUTTON", L"Диаграмма",
+            WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+           1110, 10, 400, 30, hwnd, (HMENU)6, NULL, NULL);
+        allSymbols = true;
+        EnableWindow(hwndBtnPie, FALSE);
+
+        int maxThreads = std::thread::hardware_concurrency();
+        if (maxThreads == 0) {
+            maxThreads = 1;  
+        }
+
+        hwndSlider = CreateWindowEx(
+            0, TRACKBAR_CLASS, L"",
+            WS_CHILD | WS_VISIBLE | TBS_NOTICKS | TBS_ENABLESELRANGE,
+            710, 90, 790, 30,
+            hwnd, (HMENU)10, GetModuleHandle(NULL), NULL
+        );
+
+        SendMessage(hwndSlider, TBM_SETRANGE, TRUE, MAKELONG(1, maxThreads)); 
+        SendMessage(hwndSlider, TBM_SETPOS, TRUE, 8);  
+        for (int i = 1; i <= maxThreads; ++i) {
+            SendMessage(hwndSlider, TBM_SETTIC, 0, i);  
+        }
+
+        CreateWindow(L"STATIC", L"Количество потоков для анализа",
+            WS_CHILD | WS_VISIBLE | SS_LEFT,
+            715, 70, 400, 20, hwnd, NULL, GetModuleHandle(NULL), NULL);
+
+        SetTimer(hwnd, TIMER_ID, 300, NULL);
+        break;
+    }
+    case WM_PAINT: {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
+        RECT windowRect;
+        GetClientRect(hwnd, &windowRect);
+        FillRect(hdc, &windowRect, (HBRUSH)(COLOR_WINDOW + 1));
+
+        RECT sliderRect;
+        GetClientRect(hwndSlider, &sliderRect);
+
+        POINT pt = { sliderRect.left, sliderRect.top };
+        MapWindowPoints(hwndSlider, hwnd, &pt, 1); 
+        pt.x += 20;
+        int sliderWidth = sliderRect.right - sliderRect.left - 28;
+
+        int tickCount = std::thread::hardware_concurrency(); 
+
+        int offset = 5; 
+
+        for (int i = 1; i <= tickCount; ++i) {
+            int x = pt.x + (sliderWidth * (i - 1)) / (tickCount - 1) ; 
+            wchar_t label[10];
+            swprintf(label, 10, L"%d", i); 
+
+            TextOut(hdc, x - 10, pt.y + sliderRect.bottom + 5, label, wcslen(label));
+        }
+        if (isDrawPieChart) {
+            DrawPieChart(hwndChartWindow, groupFrequencyMap);
+        }
+        break;
+    }
+    case WM_TIMER: {
+        if (wParam == TIMER_ID) {
+            if (isLoading) {
+             
+                dotCount = (dotCount + 1) % 6; 
+                std::wstring dots(dotCount, L'.');
+                SetWindowText(hwndStatusSaveText, (baseText + dots).c_str());
+            }
+          
+        }
+        break;
+    }
+    case WM_CTLCOLORSTATIC:
+    {
+        HDC hdcStatic = (HDC)wParam;
+        SetBkMode(hdcStatic, TRANSPARENT);
+        SetTextColor(hdcStatic, RGB(0, 0, 0)); 
+        return (LRESULT)GetStockObject(WHITE_BRUSH); 
+    }
+    case WM_HSCROLL: {
+        if ((HWND)lParam == hwndSlider) {
+            numThreads = SendMessage(hwndSlider, TBM_GETPOS, 0, 0);
+        }
+        break;
+    }
     case WM_COMMAND:
         if (LOWORD(wParam) == 1) {
-            StartAnalysis(hwnd);
+            if (!isAllSaved) {
+                int result = MessageBox(
+                    hwnd,
+                    TEXT("Вы не можете начать новый анализ, пока сохраняются данные"),
+                    TEXT("Ошибка"),
+                    MB_ICONERROR | MB_OK
+                );
+                break;
+            }
+            else {
+                StartAnalysis(hwnd);
+            } 
         }
-        else if (HIWORD(wParam) == CBN_SELCHANGE) { // Обрабатываем изменение выбора в комбобоксе
+        else if (HIWORD(wParam) == CBN_SELCHANGE) { 
             int selectedIndex = SendMessage(hwndComboBox, CB_GETCURSEL, 0, 0);
             if (selectedIndex != CB_ERR) {
                 std::wstring selectedGroup;
@@ -479,7 +506,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     SendMessage(hwndComboBox, CB_GETLBTEXT, selectedIndex, (LPARAM)selectedGroup.data());
                 }
 
-                // Обновляем выбранные диапазоны на основе выбора в комбобоксе
                 selectedRanges.clear();
                 if (selectedIndex == 9) {
                     allSymbols = true;
@@ -494,22 +520,93 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 }
             }
         }
+        else if (LOWORD(wParam) == 6) {
+
+            hwndChartWindow = CreateWindowEx(0, L"STATIC", NULL,
+                WS_CHILD | WS_VISIBLE | SS_OWNERDRAW,
+               710, 200, 520, 520, hwnd, NULL, NULL, NULL);
+            groupFrequencyMap.clear();
+            for (const auto& [symbol, frequency] : sortedFrequencyInFiles) {
+                std::wstring group = GetSymbolGroup(symbol);
+                groupFrequencyMap[group] += frequency;
+            }
+
+            DrawPieChart(hwndChartWindow, groupFrequencyMap);
+        }
+        else if (LOWORD(wParam) == 11) {
+            OPENFILENAME ofn = {};
+            WCHAR filePath[MAX_PATH] = {};
+
+            ofn.lStructSize = sizeof(ofn);
+            ofn.hwndOwner = hwnd;
+            ofn.lpstrFilter = L"Текстовые файлы (*.txt)\0*.txt\0Все файлы (*.*)\0*.*\0";
+            ofn.lpstrFile = filePath;
+            ofn.nMaxFile = MAX_PATH;
+            ofn.Flags = OFN_OVERWRITEPROMPT;
+            ofn.lpstrDefExt = L"txt";
+
+            if (GetSaveFileName(&ofn)) {
+                saveStatsPath = filePath;
+                MessageBox(hwnd, L"Путь для сохранения статистики установлен.", L"Информация", MB_OK);
+            }
+            
+        }
+        else if (LOWORD(wParam) == 12) {
+            OPENFILENAME ofn = {};
+            WCHAR filePath[MAX_PATH] = {};
+
+            ofn.lStructSize = sizeof(ofn);
+            ofn.hwndOwner = hwnd;
+            ofn.lpstrFilter = L"Текстовые файлы (*.txt)\0*.txt\0Все файлы (*.*)\0*.*\0";
+            ofn.lpstrFile = filePath;
+            ofn.nMaxFile = MAX_PATH;
+            ofn.Flags = OFN_OVERWRITEPROMPT;
+            ofn.lpstrDefExt = L"txt";
+
+            if (GetSaveFileName(&ofn)) {
+                saveFilesInfoPath = filePath;
+                MessageBox(hwnd, L"Путь для сохранения информации о файлах установлен.", L"Информация", MB_OK);
+            }
+        }
         break;
 
     case WM_DESTROY:
         PostQuitMessage(0);
+        KillTimer(hwnd, TIMER_ID);
+        statsFile.flush();
+        statsFile.close();
         break;
 
+    case WM_CLOSE: {
+        int result = MessageBox(
+            hwnd,
+            L"Вы действительно хотите выйти? Некоторые данные могут быть не сохранены",
+            L"Предупреждение",
+            MB_YESNO | MB_ICONQUESTION
+        );
+        if (result == IDYES) {
+            isSaving = false;
+            DestroyWindow(hwnd); 
+        }
+        return 0;
+    }
+    case WM_KEYDOWN: {
+        if (wParam == 'S') { 
+            SendMessage(hwnd, WM_COMMAND, 11, 0);
+        }
+        else if (wParam == 'F') { 
+            SendMessage(hwnd, WM_COMMAND, 12, 0);
+        }
+        break;
+    }
     case WM_NOTIFY: {
         if (((LPNMHDR)lParam)->code == LVN_GETDISPINFO) {
             NMLVDISPINFO* pDispInfo = (NMLVDISPINFO*)lParam;
             LVITEM* pItem = &pDispInfo->item;
 
-            // Проверяем, что элемент запрашивается для отображения
             if (pItem->mask & LVIF_TEXT) {
                 int index = pItem->iItem;
 
-                // Проверка, что индекс в пределах допустимого диапазона
                 if (index >= 0 && index < sortedFrequencyInFiles.size()) {
                     char32_t symbol = sortedFrequencyInFiles[index].first;
                     uint64_t count = sortedFrequencyInFiles[index].second;
@@ -518,15 +615,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     double percentage = (static_cast<double>(count) / totalSymbolCount) * 100.0;
                     wchar_t buffer[256];
                     switch (pItem->iSubItem) {
-                    case 0: // Символ
+                    case 0: 
                         wcsncpy_s(pItem->pszText, pItem->cchTextMax, utf16Symbol.c_str(), _TRUNCATE);
                         break;
-                    case 1: // Количество
+                    case 1: 
                         swprintf(buffer, 256, L"%llu", count);
                         wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
                         break;
-                    case 2: // Процент
-
+                    case 2: 
                         swprintf(buffer, 256, L"%.8f", percentage);
                         wcsncpy_s(pItem->pszText, pItem->cchTextMax, buffer, _TRUNCATE);
                         break;
@@ -552,44 +648,61 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     case WM_UPDATE_PROGRESS:
     {
-        // Получаем размер глобальной очереди файлов
-
-        // Инкрементируем глобальную переменную fileAnalized
         fileAnalized++;
-
-        // Вычисляем прогресс
         if (totalFindFiles > 0) {
             int progress = static_cast<int>((static_cast<float>(fileAnalized) / totalFindFiles) * 100);
-            SendMessage(hwndProgressBar, PBM_SETPOS, progress, 0); // Обновляем прогресс-бар
+            SendMessage(hwndProgressBar, PBM_SETPOS, progress, 0); 
 
         }
     }
     break;
-
     default:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
     return 0;
 }
 
+
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
-    // Инициализация библиотеки common controls
     InitCommonControls();
+    isDrawPieChart = false;
+    WCHAR modulePath[MAX_PATH];
+    GetModuleFileName(NULL, modulePath, MAX_PATH);
+    std::wstring baseDir = modulePath;
+    size_t pos = baseDir.find_last_of(L"\\/");
+    if (pos != std::wstring::npos) {
+        baseDir = baseDir.substr(0, pos);
+    }
 
-    // Регистрация окна
+    saveStatsPath = baseDir + L"\\stats.txt";
+    saveFilesInfoPath = baseDir + L"\\files_info.txt";
+
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = GetModuleHandle(NULL);
     wc.lpszClassName = L"MainWindowClass";
     RegisterClass(&wc);
 
-    // Создание окна
-    HWND hwnd = CreateWindow(wc.lpszClassName, L"Symbol Frequency Analyzer",
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1400, 900, NULL, NULL, wc.hInstance, NULL);
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    // Главный цикл обработки сообщений
+    HWND hwnd = CreateWindow(
+        wc.lpszClassName,
+        L"Symbol Frequency Analyzer",
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_MAXIMIZE,
+        0, 0, screenWidth, screenHeight, 
+        NULL,
+        NULL,
+        wc.hInstance,
+        NULL
+    );
+    if (hwnd == NULL) {
+        return 0;
+    }
+    AddMenu(hwnd);
+
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
