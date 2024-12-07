@@ -63,7 +63,7 @@ std::ofstream statsFile;
 std::vector<std::pair<char32_t, char32_t>> selectedRanges;
 bool allSymbols;
 uint64_t totalSymbolCount;
-uint64_t fileAnalized;
+uint64_t fileAnalized =0 ;
 uint64_t totalFindFiles = 0;
 std::vector<std::pair<char32_t, uint64_t>> sortedFrequencyInFiles;
 std::map<std::wstring, uint64_t> groupFrequencyMap;
@@ -75,6 +75,8 @@ HWND hwndListViewForLog;
 HWND hwndBtnPie;
 HWND hwndChartWindow;
 HWND hwndSlider;
+HWND hwndCountOfSymbols;
+HWND hwndCountOfFiles;
 std::wstring saveStatsPath;
 std::wstring saveFilesInfoPath;
 int numThreads;
@@ -252,11 +254,11 @@ void ListFiles(const std::wstring& directoryPath, HWND hwnd) {
 void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile, std::ofstream& statsFile, HWND hwnd) {
     isAllSaved = false;
     auto startTime = std::chrono::system_clock::now();
-
+    totalFindFiles = 0;
+    fileAnalized = 0;
     unsigned char bom[3] = { 0xEF, 0xBB, 0xBF };
     statsFile.write(reinterpret_cast<const char*>(bom), sizeof(bom));
 
-    numThreads = std::thread::hardware_concurrency();
     std::vector<HANDLE> threads(numThreads);
 
     for (int i = 0; i < numThreads; i++) {
@@ -305,6 +307,11 @@ void AnalyzeDirectory(const std::wstring& directoryPath, std::wofstream& logFile
     
     isLoading = false;
     SetWindowText(hwndStatusSaveText, L"Стастика сохранена в файл");
+    std::wstring message = L"Всего просканировано файлов: " + std::to_wstring(totalFindFiles);
+    SetWindowText(hwndCountOfFiles, message.c_str());
+    message = L"Всего найдено символов:" + std::to_wstring(totalSymbolCount);
+    SetWindowText(hwndCountOfSymbols, message.c_str());
+   
     logFile.close();
     statsFile.close();
     isAllSaved = true;
@@ -315,6 +322,8 @@ void StartAnalysis(HWND hwnd) {
     EnableWindow(hwndBtnPie, FALSE);
     SetWindowText(hwndStatusText, L" ");
     SetWindowText(hwndStatusSaveText, L" ");
+    SetWindowText(hwndCountOfFiles, L" ");
+    SetWindowText(hwndCountOfSymbols, L" ");
     ListView_DeleteAllItems(hwndListView);
     ListView_DeleteAllItems(hwndListViewForLog);
     doneAddingFiles = false;
@@ -347,7 +356,6 @@ void StartAnalysis(HWND hwnd) {
     globalFrequency.clear();
     totalSymbolCount = 0;
 
-    // Запуск анализа
     std::thread analysisThread([=] {
         AnalyzeDirectory(directoryPath, logFile, statsFile, hwnd);
         });
@@ -384,7 +392,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         hwndStatusSaveText = CreateWindow(L"STATIC", L"",
             WS_CHILD | WS_VISIBLE | SS_CENTER,
             470, 50, 223, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
-
+        hwndCountOfSymbols = CreateWindow(L"STATIC", L"",
+            WS_CHILD | WS_VISIBLE | SS_LEFT,
+            20, 435, 300, 20, hwnd, NULL, GetModuleHandle(NULL), NULL);
+        hwndCountOfFiles = CreateWindow(L"STATIC", L"",
+            WS_CHILD | WS_VISIBLE | SS_LEFT,
+            350, 435, 300, 20, hwnd, NULL, GetModuleHandle(NULL), NULL);
         hwndPathInput = CreateWindow(L"EDIT", L"",
             WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT,
             20, 10, 670, 30, hwnd, NULL, GetModuleHandle(NULL), NULL);
@@ -401,8 +414,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         EnableWindow(hwndBtnPie, FALSE);
 
         int maxThreads = std::thread::hardware_concurrency();
+        numThreads = maxThreads;
         if (maxThreads == 0) {
             maxThreads = 1;  
+            numThreads = 1;
         }
 
         hwndSlider = CreateWindowEx(
@@ -413,7 +428,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         );
 
         SendMessage(hwndSlider, TBM_SETRANGE, TRUE, MAKELONG(1, maxThreads)); 
-        SendMessage(hwndSlider, TBM_SETPOS, TRUE, 8);  
+        SendMessage(hwndSlider, TBM_SETPOS, TRUE, numThreads);
         for (int i = 1; i <= maxThreads; ++i) {
             SendMessage(hwndSlider, TBM_SETTIC, 0, i);  
         }
